@@ -51,15 +51,19 @@ if (!config.token) {
 }
 
 class DevServerManager {
-    var ownerId;
   constructor() {
   }
-  setCurrentOwner(id) {
+  setCurrentOwnerId(id) {
       this.ownerId = id;
   }
-  getCurrentOwner() {
+  getCurrentOwnerId() {
       return this.ownerId;
   }
+  // returns user object
+  getCurrentOwner(callback) {
+      controller.storage.users.get(this.getCurrentOwnerId(), callback);
+  }
+
 }
 var devServerManager = new DevServerManager();
 
@@ -207,29 +211,30 @@ controller.hears(['shutdown'], 'direct_message,direct_mention,mention', function
 
 controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your name'],
     'direct_message,direct_mention,mention', function(bot, message) {
+    var hostname = os.hostname();
+    var uptime = formatUptime(process.uptime());
 
-        var hostname = os.hostname();
-        var uptime = formatUptime(process.uptime());
+    bot.reply(message,
+        ':robot_face: I am a bot named <@' + bot.identity.name +
+         '>. I have been running for ' + uptime + ' on ' + hostname + '.');
 
-        bot.reply(message,
-            ':robot_face: I am a bot named <@' + bot.identity.name +
-             '>. I have been running for ' + uptime + ' on ' + hostname + '.');
-
-    });
+});
 
 controller.hears([
     'whos using dev?',
     'anyone using dev',
     'anyone on dev'
-], function(bot, message) {
-
+],'direct_message',function(bot, message) {
         var hostname = os.hostname();
         var uptime = formatUptime(process.uptime());
 
-        bot.reply(message,
-            ':robot_face: I am a bot named <@' + bot.identity.name +
-             '>. I have been running for ' + uptime + ' on ' + hostname + '.');
-
+        devServerManager.getCurrentOwner(function(err, user) {
+            if (user) {
+                bot.reply(message,'Person: '+user.name+' has reserved the dev server');
+            } else {
+                bot.reply(message,'No one is currently reserving the dev server.');
+            }
+        });
     });
 
 function formatUptime(uptime) {
