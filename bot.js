@@ -50,6 +50,14 @@ if (!config.token) {
     process.exit(1);
 }
 
+var controller = Botkit.slackbot({
+    debug: true,
+});
+
+var bot = controller.spawn({
+    token: config.token
+}).startRTM();
+
 class DevServerManager {
   constructor() {
   }
@@ -61,19 +69,10 @@ class DevServerManager {
   }
   // returns user object
   getCurrentOwner(callback) {
-      controller.storage.users.get(this.getCurrentOwnerId(), callback);
+      bot.api.users.info({ user:this.getCurrentOwnerId() }, callback);
   }
-
 }
 var devServerManager = new DevServerManager();
-
-var controller = Botkit.slackbot({
-    debug: true,
-});
-
-var bot = controller.spawn({
-    token: config.token
-}).startRTM();
 
 controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
 
@@ -221,16 +220,34 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
 });
 
 controller.hears([
-    "who'?s using dev\??",
-    "(anyone|still) (use|using|on)\??",
+    "who'?s (using|is using) dev\??",
+    "(anyone|still) (use|using|on) dev\??",
     "is (anyone|still) (using|on) dev\??",
 ],'direct_message',function(bot, message) {
 
-        devServerManager.getCurrentOwner(function(err, user) {
-            if (user) {
-                bot.reply(message,'Person: '+user.name+' has reserved the dev server');
+        devServerManager.getCurrentOwner(function(err, response) {
+            if (response) {
+                 var user = response["user"];
+                bot.reply(message,'<@'+user.name+'> has reserved the dev server');
             } else {
                 bot.reply(message,'No one is currently reserving the dev server.');
+            }
+        });
+    });
+
+controller.hears([
+    "I'?m (using|on|borrowing) dev server"
+],'direct_message',function(bot, message) {
+        console.log('Message User: ');
+        console.log(message.user);
+        bot.api.users.info({ user:message.user }, function (err,response) {
+            // if we got a user, read id
+            if (response) {
+                var user = response["user"];
+                bot.reply(message,'Reserving dev server for <@'+user.name+'>!');
+                devServerManager.setCurrentOwnerId(message.user);
+            } else {
+                bot.reply(message,"I couldn't find you on slack so I can't reserve it for you.");
             }
         });
     });
