@@ -51,13 +51,14 @@ if (!config.token) {
 }
 
 class DevServerManager {
+    var ownerId;
   constructor() {
   }
   setCurrentOwner(id) {
-
+      this.ownerId = id;
   }
   getCurrentOwner() {
-
+      return this.ownerId;
   }
 }
 var devServerManager = new DevServerManager();
