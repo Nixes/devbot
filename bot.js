@@ -221,9 +221,9 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
 });
 
 controller.hears([
-    'whos using dev?',
-    'anyone using dev',
-    'anyone on dev'
+    "who'?s using dev\??",
+    "(anyone|still) (use|using|on)\??",
+    "is (anyone|still) (using|on) dev\??",
 ],'direct_message',function(bot, message) {
         var hostname = os.hostname();
         var uptime = formatUptime(process.uptime());
