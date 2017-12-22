@@ -225,8 +225,6 @@ controller.hears([
     "(anyone|still) (use|using|on)\??",
     "is (anyone|still) (using|on) dev\??",
 ],'direct_message',function(bot, message) {
-        var hostname = os.hostname();
-        var uptime = formatUptime(process.uptime());
 
         devServerManager.getCurrentOwner(function(err, user) {
             if (user) {
