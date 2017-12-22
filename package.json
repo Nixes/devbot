@@ -4,7 +4,6 @@
   "description": "a slack bot for managing dev server",
   "main": "bot.js",
   "dependencies": {
-    "@slack/client": "^3.14.2",
     "botkit": "^0.6.7"
   },
   "devDependencies": {},
