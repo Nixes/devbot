@@ -226,7 +226,7 @@ controller.hears([
 ],'direct_message',function(bot, message) {
 
         devServerManager.getCurrentOwner(function(err, response) {
-            if (response) {
+            if (response && response["user"]) {
                  var user = response["user"];
                 bot.reply(message,'<@'+user.name+'> has reserved the dev server');
             } else {
@@ -242,7 +242,7 @@ controller.hears([
         console.log(message.user);
         bot.api.users.info({ user:message.user }, function (err,response) {
             // if we got a user, read id
-            if (response) {
+            if (response && response["user"]) {
                 var user = response["user"];
                 bot.reply(message,'Reserving dev server for <@'+user.name+'>!');
                 devServerManager.setCurrentOwnerId(message.user);
