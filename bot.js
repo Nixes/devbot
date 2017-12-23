@@ -114,7 +114,10 @@ controller.hears([
     });
 
 controller.hears([
-    "I'?m (using|on|borrowing) dev server"
+    "I'?m (using|on|borrowing) dev",
+    "I'?m (using|on|borrowing) dev server",
+    "I (using|on|borrowing) dev",
+    "I (using|on|borrowing) dev server"
 ],'direct_message',function(bot, message) {
         console.log('Message User: ');
         console.log(message.user);
@@ -128,6 +131,17 @@ controller.hears([
                 bot.reply(message,"I couldn't find you on slack so I can't reserve it for you.");
             }
         });
+    });
+controller.hears([
+    "I'?m (finished|done) (using|borrowing) dev",
+    "I'?ve finished (using|borrowing) dev",
+],'direct_message',function(bot, message) {
+        console.log('Message User: ');
+        console.log(message.user);
+        if (message.user === devServerManager.getCurrentOwnerId()) {
+            bot.reply(message,"You are no longer using dev");
+            devServerManager.setCurrentOwnerId();
+        }
     });
 
 function formatUptime(uptime) {
