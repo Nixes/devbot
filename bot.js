@@ -24,10 +24,21 @@ class DevServerManager {
   constructor() {
   }
   setCurrentOwnerId(id) {
-      this.ownerId = id;
+      this.owner_id = id;
+      this.owner_set_time = new Date();
+  }
+  getOwnerSetTime() {
+      return this.owner_set_time;
+  }
+  getOwnerUsageDuration() {
+      let current_time = new Date();
+      // if owner set time exists
+      if ( this.getOwnerSetTime() ) {
+          return current_time - this.getOwnerSetTime();
+      }
   }
   getCurrentOwnerId() {
-      return this.ownerId;
+      return this.owner_id;
   }
   // returns user object
   getCurrentOwner(callback) {
@@ -148,11 +159,11 @@ function formatUptime(uptime) {
     var unit = 'second';
     if (uptime > 60) {
         uptime = uptime / 60;
-        unit = 'minute';
+        unit = 'minutes';
     }
     if (uptime > 60) {
         uptime = uptime / 60;
-        unit = 'hour';
+        unit = 'hours';
     }
     if (uptime != 1) {
         unit = unit + 's';
