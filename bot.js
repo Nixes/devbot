@@ -169,6 +169,6 @@ function formatUptime(uptime) {
         unit = unit + 's';
     }
 
-    uptime = uptime + ' ' + unit;
+    uptime = Math.round(uptime) + ' ' + unit;
     return uptime;
 }
