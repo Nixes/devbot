@@ -159,11 +159,11 @@ function formatUptime(uptime) {
     var unit = 'second';
     if (uptime > 60) {
         uptime = uptime / 60;
-        unit = 'minutes';
+        unit = 'minute';
     }
     if (uptime > 60) {
         uptime = uptime / 60;
-        unit = 'hours';
+        unit = 'hour';
     }
     if (uptime != 1) {
         unit = unit + 's';
