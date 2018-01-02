@@ -30,6 +30,9 @@ class DevServerManager {
   getOwnerSetTime() {
       return this.owner_set_time;
   }
+  setOwnerSetTime(set_time) {
+      this.owner_set_time =  set_time;
+  }
   getOwnerUsageDuration() {
       let current_time = new Date();
       // if owner set time exists
@@ -46,6 +49,8 @@ class DevServerManager {
   }
 }
 var devServerManager = new DevServerManager();
+
+loadState();
 
 controller.hears(['hello', 'hi'], 'direct_message,direct_mention,mention', function(bot, message) {
 
@@ -104,12 +109,12 @@ controller.hears(['uptime', 'identify yourself', 'who are you', 'what is your na
 
     bot.reply(message,
         ':robot_face: I am a bot named <@' + bot.identity.name +
-         '>. I have been running for ' + uptime + ' on ' + hostname + '.');
+         '>. My code is at https://github.com/Nixes/devbot . I have been running for ' + uptime + ' on ' + hostname + '.');
 
 });
 
 controller.hears([
-    "who'?s (using|is using) dev\??",
+    "who'?s? (using|is using) dev\??",
     "(anyone|still) (use|using|on) dev\??",
     "is (anyone|still) (using|on) dev\??",
 ],'direct_message,direct_mention,mention',function(bot, message) {
@@ -127,8 +132,8 @@ controller.hears([
 controller.hears([
     "I'?m (using|on|borrowing) dev",
     "I'?m (using|on|borrowing) dev server",
-    "I (using|on|borrowing) dev",
-    "I (using|on|borrowing) dev server"
+    "I am (using|on|borrowing) dev",
+    "I am (using|on|borrowing) dev server"
 ],'direct_message,direct_mention,mention',function(bot, message) {
         console.log('Message User: ');
         console.log(message.user);
@@ -144,8 +149,8 @@ controller.hears([
         });
     });
 controller.hears([
-    "I'?m (finished|done) (using|borrowing) dev",
-    "I'?ve finished (using|borrowing) dev",
+    "I'?m? (finished|done) (using|borrowing) dev",
+    "(I'?ve|I'?m|I) finished (using|borrowing) dev",
 ],'direct_message,direct_mention,mention',function(bot, message) {
         console.log('Message User: ');
         console.log(message.user);
@@ -154,6 +159,15 @@ controller.hears([
             devServerManager.setCurrentOwnerId();
         }
     });
+
+function pluraliser(quantity) {
+
+}
+
+function formatSeconds(seconds) {
+    let clamped_seconds = Math.clamp(seconds);
+
+}
 
 function formatUptime(uptime) {
     var unit = 'second';
@@ -172,3 +186,36 @@ function formatUptime(uptime) {
     uptime = Math.round(uptime) + ' ' + unit;
     return uptime;
 }
+
+function saveState() {
+    console.log("Saving state to file.");
+    let state = {
+        owner_id: devServerManager.getCurrentOwnerId(),
+        owner_set_time: devServerManager.getOwnerSetTime(),
+    };
+    let stateString = JSON.stringify(devServerManager);
+    fs.writeFileSync('state.json', stateString);
+}
+
+function loadState() {
+    console.log("Loading state from file.");
+    try {
+        let stateString = fs.readFileSync('state.json');
+        let state = JSON.parse(stateString);
+        devServerManager.setCurrentOwnerId(state.owner_id);
+        devServerManager.setOwnerSetTime(state.owner_set_time);
+    } catch (error) {
+        console.log("No existing state file present, running with defaults.");
+    }
+}
+
+
+// Start reading from stdin so we don't exit.
+process.stdin.resume();
+
+process.on('SIGINT', function () {
+    console.log("Got SIGINT.");
+    saveState();
+    console.log("Exiting");
+    process.exit();
+});
