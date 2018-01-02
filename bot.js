@@ -117,7 +117,7 @@ controller.hears([
     "who'?s? (using|is using) dev\??",
     "(anyone|still) (use|using|on) dev\??",
     "is (anyone|still) (using|on) dev\??",
-],'direct_message,direct_mention,mention',function(bot, message) {
+],'direct_message,direct_mention,mention,message_received',function(bot, message) {
 
         devServerManager.getCurrentOwner(function(err, response) {
             if (response && response["user"]) {
@@ -134,7 +134,7 @@ controller.hears([
     "I'?m (using|on|borrowing) dev server",
     "I am (using|on|borrowing) dev",
     "I am (using|on|borrowing) dev server"
-],'direct_message,direct_mention,mention',function(bot, message) {
+],'direct_message,direct_mention,mention,message_received',function(bot, message) {
         console.log('Message User: ');
         console.log(message.user);
         bot.api.users.info({ user:message.user }, function (err,response) {
@@ -151,7 +151,7 @@ controller.hears([
 controller.hears([
     "I'?m? (finished|done) (using|borrowing) dev",
     "(I'?ve|I'?m|I) finished (using|borrowing) dev",
-],'direct_message,direct_mention,mention',function(bot, message) {
+],'direct_message,direct_mention,mention,message_received',function(bot, message) {
         console.log('Message User: ');
         console.log(message.user);
         if (message.user === devServerManager.getCurrentOwnerId()) {
