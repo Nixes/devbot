@@ -150,7 +150,9 @@ controller.hears([
     });
 controller.hears([
     "I'?m? (finished|done) (using|borrowing) dev",
+    "I'?m? (finished|done) (using|borrowing) dev server",
     "(I'?ve|I'?m|I) finished (using|borrowing) dev",
+    "(I'?ve|I'?m|I) finished (using|borrowing) dev server",
 ],'direct_message,direct_mention,mention,message_received',function(bot, message) {
         console.log('Message User: ');
         console.log(message.user);
