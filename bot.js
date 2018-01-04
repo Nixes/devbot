@@ -22,6 +22,7 @@ var bot = controller.spawn({
 
 controller.on('rtm_close', function() {
     console.log('Lost connection to slack server, exiting.');
+    saveState();
     process.exit();
 });
 
